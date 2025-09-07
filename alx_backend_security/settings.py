@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ip_tracking',
     'django_ipgeolocation',
+    'django_celery_beat',
+
 ]
 
 MIDDLEWARE = [
@@ -127,4 +129,22 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
+}
+
+
+
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+
+CELERY_BEAT_SCHEDULE = {
+    'detect-anomalies-every-hour': {
+        'task': 'ip_tracking.tasks.detect_anomalies',
+        'schedule': 3600.0,  # Run every hour (3600 seconds)
+    },
 }
